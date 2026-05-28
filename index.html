@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExamTantra Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070809;--s1:#0D0F12;--s2:#121619;--s3:#181D22;--s4:#1F262E;
+  --acc:#4A8EFF;--acc2:#6EA8FF;--acc-dim:rgba(74,142,255,.1);--acc-brd:rgba(74,142,255,.2);
+  --gold:#C9962A;--gold-dim:rgba(201,150,42,.1);--gold-brd:rgba(201,150,42,.2);
+  --text:#D8E4F0;--muted:#5A6A80;--muted2:#8A9AB0;
+  --green:#3A9C6E;--green-dim:rgba(58,156,110,.1);--green-brd:rgba(58,156,110,.25);
+  --red:#C45050;--red-dim:rgba(196,80,80,.1);--red-brd:rgba(196,80,80,.25);
+  --brd:rgba(255,255,255,.06);
+  --r:10px;--rl:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px}
+
+/* ── SIDEBAR ──────────────────────────────────────────────── */
+.sb{width:220px;background:var(--s1);border-right:1px solid var(--brd);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:10}
+.sb-logo{padding:1.3rem 1.2rem;border-bottom:1px solid var(--brd)}
+.sb-logo .brand{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:700;color:var(--gold)}
+.sb-logo .sub{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);margin-top:.1rem;letter-spacing:.12em;text-transform:uppercase}
+.ns{padding:.9rem .9rem .25rem;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;font-weight:600}
+.ni{display:flex;align-items:center;gap:.65rem;padding:.58rem .9rem;margin:.08rem .5rem;border-radius:8px;cursor:pointer;color:var(--muted2);font-size:.84rem;font-weight:500;transition:all .18s}
+.ni:hover{background:var(--s3);color:var(--text)}
+.ni.on{background:var(--acc-dim);color:var(--acc);border:1px solid var(--acc-brd)}
+.ni .ico{width:20px;text-align:center;font-size:1rem;flex-shrink:0}
+.sb-foot{margin-top:auto;padding:1rem 1.1rem;border-top:1px solid var(--brd);font-size:.72rem;color:var(--muted)}
+.sb-dot{display:inline-block;width:6px;height:6px;background:var(--green);border-radius:50%;margin-right:.4rem;box-shadow:0 0 6px var(--green)}
+
+/* ── MAIN ─────────────────────────────────────────────────── */
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column}
+.topbar{background:var(--s1);border-bottom:1px solid var(--brd);padding:0 1.8rem;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}
+.tb-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--text)}
+.tb-r{display:flex;align-items:center;gap:.8rem;font-size:.78rem;color:var(--muted)}
+
+.content{padding:1.8rem;flex:1}
+.panel{display:none}
+.panel.on{display:block}
+
+/* ── STAT ROW ─────────────────────────────────────────────── */
+.srow{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.6rem}
+.sc{background:var(--s2);border:1px solid var(--brd);border-radius:var(--rl);padding:1.2rem 1.3rem}
+.sc-v{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;margin-bottom:.15rem}
+.sc-l{font-size:.74rem;color:var(--muted);font-weight:500}
+.sc.a .sc-v{color:var(--acc)}
+.sc.g .sc-v{color:var(--green)}
+.sc.o .sc-v{color:var(--gold)}
+.sc.r .sc-v{color:var(--red)}
+
+/* ── SECTION ──────────────────────────────────────────────── */
+.stitle{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;margin-bottom:.9rem;color:var(--text)}
+.box{background:var(--s2);border:1px solid var(--brd);border-radius:var(--rl);padding:1.4rem;margin-bottom:1.4rem}
+
+/* ── FORM ─────────────────────────────────────────────────── */
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:.9rem}
+.frow.one{grid-template-columns:1fr}
+.fg label{display:block;font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.35rem}
+.fg input,.fg select{width:100%;background:var(--s3);border:1px solid var(--brd);color:var(--text);padding:.58rem .85rem;border-radius:8px;font-family:'Inter',sans-serif;font-size:.84rem;outline:none;transition:border .18s;-webkit-appearance:none}
+.fg input:focus,.fg select:focus{border-color:var(--acc)}
+.fg select option{background:var(--s3)}
+.btn{padding:.52rem 1.2rem;border-radius:8px;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;border:none;transition:all .18s}
+.btn-a{background:var(--acc);color:#fff}
+.btn-a:hover{background:var(--acc2)}
+.btn-del{background:var(--red-dim);color:var(--red);border:1px solid var(--red-brd);font-size:.75rem;padding:.3rem .7rem}
+.btn-del:hover{background:rgba(196,80,80,.2)}
+.btn-o{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-brd)}
+.btn-o:hover{background:rgba(201,150,42,.18)}
+.btn-sm{padding:.28rem .65rem;font-size:.72rem}
+
+/* ── TABLE ────────────────────────────────────────────────── */
+.tw{overflow-x:auto;border-radius:10px;border:1px solid var(--brd)}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{background:var(--s3);padding:.65rem .9rem;text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
+td{padding:.65rem .9rem;border-top:1px solid var(--brd);vertical-align:middle}
+tr:hover td{background:rgba(255,255,255,.02)}
+.badge{display:inline-block;padding:.18rem .55rem;border-radius:20px;font-size:.68rem;font-weight:600}
+.ba{background:var(--acc-dim);color:var(--acc);border:1px solid var(--acc-brd)}
+.bg{background:var(--green-dim);color:var(--green);border:1px solid var(--green-brd)}
+.bo{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-brd)}
+.br{background:var(--red-dim);color:var(--red);border:1px solid var(--red-brd)}
+
+/* ── UPLOAD ZONE ──────────────────────────────────────────── */
+.uz{border:1.5px dashed rgba(74,142,255,.22);border-radius:12px;padding:1.8rem;text-align:center;cursor:pointer;transition:all .2s}
+.uz:hover{border-color:var(--acc);background:var(--acc-dim)}
+.uz-ico{font-size:1.8rem;margin-bottom:.5rem}
+.uz-txt{color:var(--muted2);font-size:.82rem}
+.uz-txt strong{color:var(--acc)}
+.prog{height:5px;background:var(--s3);border-radius:3px;margin-top:.7rem;overflow:hidden;display:none}
+.prog-bar{height:100%;background:var(--acc);border-radius:3px;width:0%;transition:width .25s}
+.fmsg{border-radius:8px;padding:.65rem .9rem;font-size:.8rem;margin-top:.7rem;display:none}
+.fmsg.ok{background:var(--green-dim);border:1px solid var(--green-brd);color:var(--green)}
+.fmsg.err{background:var(--red-dim);border:1px solid var(--red-brd);color:var(--red)}
+
+/* ── RECENT FEED ──────────────────────────────────────────── */
+.feed-item{display:flex;align-items:center;gap:.9rem;padding:.7rem 0;border-bottom:1px solid var(--brd)}
+.feed-item:last-child{border-bottom:none}
+.feed-ico{font-size:1.1rem;width:28px;text-align:center;flex-shrink:0}
+.feed-body{flex:1;min-width:0}
+.feed-name{font-size:.84rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed-meta{font-size:.72rem;color:var(--muted);margin-top:.1rem}
+
+/* ── LOADING ──────────────────────────────────────────────── */
+.loading{text-align:center;padding:2rem;color:var(--muted)}
+.spin{display:inline-block;width:22px;height:22px;border:2px solid rgba(74,142,255,.2);border-top-color:var(--acc);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- FIREBASE -->
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getFirestore,collection,addDoc,getDocs,doc,deleteDoc,updateDoc,query,orderBy,getCountFromServer}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const CLOUD_NAME="ds3bcxa2p";
+const CLOUD_PRESET="ExamTantra";
+
+const cfg={
+  apiKey:"AIzaSyAk_D_htTyxjr_RktNqW4TMajgBUT5Z2ec",
+  authDomain:"examtantra-99d70.firebaseapp.com",
+  projectId:"examtantra-99d70",
+  storageBucket:"examtantra-99d70.firebasestorage.app",
+  messagingSenderId:"651555565580",
+  appId:"1:651555565580:web:500a7fa6af3c8fcaf87e29"
+};
+const app=initializeApp(cfg);
+window._db=db;
+window._fs={collection,addDoc,getDocs,doc,deleteDoc,updateDoc,query,orderBy,getCountFromServer};
+window._fs={collection,addDoc,getDocs,doc,deleteDoc,updateDoc,query,orderBy,getCountFromServer,ref,uploadBytesResumable,getDownloadURL};
+
+// ── DASHBOARD ─────────────────────────────────────────────
+window.loadDash=async function(){
+  try{
+    const[sc,uc,mc,rc]=await Promise.all([
+      getCountFromServer(collection(db,'schools')),
+      getCountFromServer(collection(db,'users')),
+      getCountFromServer(collection(db,'materials')),
+      getCountFromServer(collection(db,'largeFileRequests'))
+    ]);
+    document.getElementById('stS').textContent=sc.data().count;
+    document.getElementById('stU').textContent=uc.data().count;
+    document.getElementById('stM').textContent=mc.data().count;
+    document.getElementById('stR').textContent=rc.data().count;
+  }catch(e){console.error(e);}
+  loadFeed();
+};
+
+async function loadFeed(){
+  const el=document.getElementById('feed');
+  el.innerHTML='<div class="loading"><div class="spin"></div></div>';
+  const snap=await getDocs(query(collection(db,'materials'),orderBy('createdAt','desc')));
+  el.innerHTML='';let n=0;
+  snap.forEach(d=>{
+    if(n++>=10)return;
+    const m=d.data();
+    const item=document.createElement('div');item.className='feed-item';
+    item.innerHTML=`<div class="feed-ico">${m.type==='Worksheet'?'📝':'📖'}</div><div class="feed-body"><div class="feed-name">${m.name}</div><div class="feed-meta">${m.uploaderName} · Grade ${m.grade} · ${m.subject}</div></div><span class="badge ${m.type==='Worksheet'?'bo':'ba'}">${m.type}</span>`;
+    el.appendChild(item);
+  });
+  if(!el.children.length)el.innerHTML='<div style="color:var(--muted);font-size:.82rem;padding:.5rem 0">No uploads yet.</div>';
+}
+
+// ── SCHOOLS ───────────────────────────────────────────────
+window.addSchool=async function(){
+  const name=document.getElementById('sName').value.trim();
+  const city=document.getElementById('sCity').value.trim();
+  if(!name){showMsg('sMsg','err','Enter a school name.');return;}
+  await addDoc(collection(db,'schools'),{name,city,addedAt:new Date()});
+  showMsg('sMsg','ok','School added!');
+  document.getElementById('sName').value='';document.getElementById('sCity').value='';
+  loadSchoolsTable();
+};
+window.loadSchoolsTable=async function(){
+  const tb=document.getElementById('schTb');
+  tb.innerHTML='<tr><td colspan="4" class="loading"><span class="spin"></span></td></tr>';
+  const snap=await getDocs(query(collection(db,'schools'),orderBy('addedAt','desc')));
+  tb.innerHTML='';
+  if(snap.empty){tb.innerHTML='<tr><td colspan="4" style="color:var(--muted);text-align:center">No schools yet.</td></tr>';return;}
+  snap.forEach(d=>{
+    const s=d.data();const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted)">${d.id.slice(0,8)}…</td><td><strong>${s.name}</strong></td><td>${s.city||'—'}</td><td><button class="btn btn-del btn-sm" onclick="delSchool('${d.id}',this)">Delete</button></td>`;
+    tb.appendChild(tr);
+  });
+};
+window.delSchool=async function(id,btn){
+  if(!confirm('Delete this school?'))return;
+  btn.disabled=true;btn.textContent='…';
+  await deleteDoc(doc(db,'schools',id));loadSchoolsTable();
+};
+
+// ── UPLOAD (no size limit) ────────────────────────────────
+let _adminFile=null;
+window.adminFileSel=function(inp){
+  _adminFile=inp.files[0];
+  if(!_adminFile)return;
+  const z=document.getElementById('adUZone');
+  z.innerHTML=`<div class="uz-ico">✅</div><div style="color:var(--green);font-weight:600;font-size:.84rem">${_adminFile.name}</div><div style="font-size:.74rem;color:var(--muted);margin-top:.2rem">${(_adminFile.size/1024/1024).toFixed(2)} MB</div>`;
+};
+window.adminUpload=async function(){
+  const mt=document.getElementById('adMt').value;
+  const subj=document.getElementById('adSubj').value;
+  const grade=document.getElementById('adGrade').value;
+  const name=document.getElementById('adName').value.trim();
+  if(!mt||!subj||!grade||!name){showMsg('adMsg','err','Fill all fields.');return;}
+  if(!_adminFile){showMsg('adMsg','err','Select a file.');return;}
+  const btn=document.getElementById('adBtn');
+  btn.disabled=true;btn.textContent='Uploading…';
+  const pg=document.getElementById('adProg');pg.style.display='block';
+  try{
+    const url=await uploadToCloudinary(_adminFile,pct=>{document.getElementById('adProgBar').style.width=pct+'%';});
+    await addDoc(collection(db,'materials'),{type:mt,subject:subj,grade,name,fileName:_adminFile.name,url,uploaderId:'admin',uploaderName:'Admin',createdAt:new Date()});
+    showMsg('adMsg','ok','File uploaded successfully!');
+    btn.disabled=false;btn.textContent='Upload File';
+    document.getElementById('adName').value='';_adminFile=null;
+    document.getElementById('adUZone').innerHTML='<div class="uz-ico">📁</div><div class="uz-txt">Click to choose a file — <strong>no size limit</strong></div>';
+    pg.style.display='none';document.getElementById('adProgBar').style.width='0%';
+    loadDash();
+  }catch(e){
+    showMsg('adMsg','err',e.message);
+    btn.disabled=false;btn.textContent='Upload File';
+  }
+};
+
+// ── MATERIALS ─────────────────────────────────────────────
+window.loadMaterials=async function(){
+  const tb=document.getElementById('matTb');
+  tb.innerHTML='<tr><td colspan="7" class="loading"><span class="spin"></span></td></tr>';
+  const snap=await getDocs(query(collection(db,'materials'),orderBy('createdAt','desc')));
+  tb.innerHTML='';
+  if(snap.empty){tb.innerHTML='<tr><td colspan="7" style="color:var(--muted);text-align:center">No materials yet.</td></tr>';return;}
+  snap.forEach(d=>{
+    const m=d.data();const tr=document.createElement('tr');
+    const bc=m.type==='Worksheet'?'bo':'ba';
+    tr.innerHTML=`<td><strong>${m.name}</strong></td><td>${m.subject}</td><td>Gr ${m.grade}</td><td><span class="badge ${bc}">${m.type}</span></td><td>${m.uploaderName}</td><td><a href="${m.url}" target="_blank" style="color:var(--acc);font-size:.78rem">View ↗</a></td><td><button class="btn btn-del btn-sm" onclick="delMat('${d.id}',this)">Del</button></td>`;
+    tb.appendChild(tr);
+  });
+};
+window.delMat=async function(id,btn){
+  if(!confirm('Delete this material?'))return;
+  btn.disabled=true;btn.textContent='…';
+  await deleteDoc(doc(db,'materials',id));loadMaterials();
+};
+
+// ── REQUESTS ──────────────────────────────────────────────
+window.loadRequests=async function(){
+  const tb=document.getElementById('reqTb');
+  tb.innerHTML='<tr><td colspan="6" class="loading"><span class="spin"></span></td></tr>';
+  const snap=await getDocs(query(collection(db,'largeFileRequests'),orderBy('createdAt','desc')));
+  tb.innerHTML='';
+  if(snap.empty){tb.innerHTML='<tr><td colspan="6" style="color:var(--muted);text-align:center">No pending requests.</td></tr>';return;}
+  snap.forEach(d=>{
+    const r=d.data();const tr=document.createElement('tr');
+    tr.innerHTML=`<td><strong>${r.name}</strong><div style="font-size:.7rem;color:var(--muted)">${r.fileName} · ${(r.fileSize/1024/1024).toFixed(1)}MB</div></td><td>${r.userName}</td><td>${r.subj||r.subject}</td><td>Gr ${r.grade}</td><td><span class="badge bo">${r.mt||r.matType}</span></td><td><button class="btn btn-del btn-sm" onclick="resolveReq('${d.id}',this)">Resolve</button></td>`;
+    tb.appendChild(tr);
+  });
+};
+window.resolveReq=async function(id,btn){
+  if(!confirm('Mark as resolved?'))return;
+  btn.disabled=true;btn.textContent='…';
+  await deleteDoc(doc(db,'largeFileRequests',id));loadRequests();loadDash();
+};
+
+// ── USERS ─────────────────────────────────────────────────
+window.loadUsers=async function(){
+  const tb=document.getElementById('userTb');
+  tb.innerHTML='<tr><td colspan="5" class="loading"><span class="spin"></span></td></tr>';
+  const snap=await getDocs(query(collection(db,'users'),orderBy('points','desc')));
+  tb.innerHTML='';let r=1;
+  if(snap.empty){tb.innerHTML='<tr><td colspan="5" style="color:var(--muted);text-align:center">No users yet.</td></tr>';return;}
+  const sc=await getDocs(collection(db,'schools'));
+  const schools={};sc.forEach(s=>schools[s.id]=s.data().name);
+  snap.forEach(d=>{
+    const u=d.data();const tr=document.createElement('tr');
+    const medal=r===1?'🥇':r===2?'🥈':r===3?'🥉':r;
+    tr.innerHTML=`<td>${medal}</td><td><strong>${u.name}</strong></td><td>${schools[u.schoolId]||'—'}</td><td>Gr ${u.grade}</td><td style="color:var(--gold);font-weight:600">${u.points||0}</td>`;
+    tb.appendChild(tr);r++;
+  });
+};
+
+function showMsg(id,type,text){const el=document.getElementById(id);if(!el)return;el.className='fmsg '+type;el.textContent=text;el.style.display='block';setTimeout(()=>el.style.display='none',4000);}
+
+window.showPanel=function(name){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  document.getElementById('pn-'+name).classList.add('on');
+  document.getElementById('ni-'+name).classList.add('on');
+  const labels={dash:'Dashboard',schools:'Schools',upload:'Upload Files',materials:'Materials Library',requests:'File Requests',users:'Users'};
+  document.getElementById('tbTitle').textContent=labels[name]||name;
+  if(name==='schools')loadSchoolsTable();
+  if(name==='materials')loadMaterials();
+  if(name==='requests')loadRequests();
+  if(name==='users')loadUsers();
+};
+
+// Auto-load dashboard on start
+loadDash();
+</script>
+
+<!-- SIDEBAR -->
+<div class="sb">
+  <div class="sb-logo"><div class="brand">ExamTantra</div><div class="sub">Admin Panel</div></div>
+  <div class="ns">Overview</div>
+  <div class="ni on" id="ni-dash" onclick="showPanel('dash')"><span class="ico">📊</span>Dashboard</div>
+  <div class="ns">Content</div>
+  <div class="ni" id="ni-upload" onclick="showPanel('upload')"><span class="ico">📤</span>Upload Files</div>
+  <div class="ni" id="ni-materials" onclick="showPanel('materials')"><span class="ico">📚</span>Materials</div>
+  <div class="ni" id="ni-requests" onclick="showPanel('requests')"><span class="ico">📬</span>File Requests</div>
+  <div class="ns">Management</div>
+  <div class="ni" id="ni-schools" onclick="showPanel('schools')"><span class="ico">🏫</span>Schools</div>
+  <div class="ni" id="ni-users" onclick="showPanel('users')"><span class="ico">👥</span>Users</div>
+  <div class="sb-foot"><span class="sb-dot"></span>Firebase Connected<br><span style="color:var(--muted);font-size:.66rem;font-family:'JetBrains Mono',monospace">studymantra2026@gmail.com</span></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-title" id="tbTitle">Dashboard</div>
+    <div class="tb-r">ExamTantra Admin · v1.0</div>
+  </div>
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="panel on" id="pn-dash">
+      <div class="srow">
+        <div class="sc a"><div class="sc-v" id="stS">—</div><div class="sc-l">Schools</div></div>
+        <div class="sc g"><div class="sc-v" id="stU">—</div><div class="sc-l">Students</div></div>
+        <div class="sc o"><div class="sc-v" id="stM">—</div><div class="sc-l">Materials</div></div>
+        <div class="sc r"><div class="sc-v" id="stR">—</div><div class="sc-l">Pending Requests</div></div>
+      </div>
+      <div class="box">
+        <div class="stitle">Recent Uploads</div>
+        <div id="feed"><div class="loading"><div class="spin"></div></div></div>
+      </div>
+    </div>
+
+    <!-- UPLOAD -->
+    <div class="panel" id="pn-upload">
+      <div class="box">
+        <div class="stitle">Upload Study Material — No size limit</div>
+        <div class="frow">
+          <div class="fg"><label>Type</label>
+            <select id="adMt"><option value="">Select type…</option><option>Study Material</option><option>Worksheet</option></select>
+          </div>
+          <div class="fg"><label>Subject</label>
+            <select id="adSubj"><option value="">Select subject…</option><option>Mathematics</option><option>Physics</option><option>Chemistry</option><option>Biology</option><option>English</option><option>History</option><option>Geography</option><option>Economics</option><option>Computer Science</option><option>Accountancy</option><option>Business Studies</option><option>Other</option></select>
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label>Grade</label>
+            <select id="adGrade"><option value="">Select grade…</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option></select>
+          </div>
+          <div class="fg"><label>Material Name</label><input id="adName" type="text" placeholder="e.g. Chapter 5 Notes — Thermodynamics"></div>
+        </div>
+        <div class="frow one">
+          <div class="fg">
+            <div class="uz" onclick="document.getElementById('adFile').click()" id="adUZone">
+              <div class="uz-ico">📁</div>
+              <div class="uz-txt">Click to choose a file — <strong>no size limit</strong></div>
+            </div>
+            <input type="file" id="adFile" style="display:none" onchange="adminFileSel(this)">
+          </div>
+        </div>
+        <div class="prog" id="adProg"><div class="prog-bar" id="adProgBar"></div></div>
+        <div class="fmsg" id="adMsg"></div>
+        <button class="btn btn-a" id="adBtn" onclick="adminUpload()" style="margin-top:.7rem">Upload File</button>
+      </div>
+    </div>
+
+    <!-- MATERIALS -->
+    <div class="panel" id="pn-materials">
+      <div class="box">
+        <div class="stitle">All Materials</div>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Name</th><th>Subject</th><th>Grade</th><th>Type</th><th>Uploader</th><th>File</th><th>Del</th></tr></thead>
+            <tbody id="matTb"><tr><td colspan="7" class="loading">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- REQUESTS -->
+    <div class="panel" id="pn-requests">
+      <div class="box">
+        <div class="stitle">Large File Requests &gt;50MB</div>
+        <p style="color:var(--muted);font-size:.8rem;margin-bottom:1rem">Students whose files exceeded 50MB submitted these requests. Obtain the file from them and upload it via the Upload panel, then mark the request as resolved.</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Material</th><th>Student</th><th>Subject</th><th>Grade</th><th>Type</th><th>Action</th></tr></thead>
+            <tbody id="reqTb"><tr><td colspan="6" class="loading">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCHOOLS -->
+    <div class="panel" id="pn-schools">
+      <div class="box">
+        <div class="stitle">Add School</div>
+        <div class="frow">
+          <div class="fg"><label>School Name</label><input id="sName" type="text" placeholder="e.g. Delhi Public School"></div>
+          <div class="fg"><label>City (optional)</label><input id="sCity" type="text" placeholder="e.g. Chennai"></div>
+        </div>
+        <div class="fmsg" id="sMsg"></div>
+        <button class="btn btn-a" onclick="addSchool()">Add School</button>
+      </div>
+      <div class="box">
+        <div class="stitle">Registered Schools</div>
+        <div class="tw">
+          <table>
+            <thead><tr><th>ID</th><th>Name</th><th>City</th><th>Action</th></tr></thead>
+            <tbody id="schTb"><tr><td colspan="4" class="loading">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="panel" id="pn-users">
+      <div class="box">
+        <div class="stitle">All Students — sorted by points</div>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Rank</th><th>Name</th><th>School</th><th>Grade</th><th>Points</th></tr></thead>
+            <tbody id="userTb"><tr><td colspan="5" class="loading">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
