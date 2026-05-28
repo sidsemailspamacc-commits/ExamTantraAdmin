@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExamTantra Admin</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+  --bg:#070809;
+  --s1:#0D0F12;
+  --s2:#121619;
+  --s3:#181D22;
+  --s4:#1F262E;
+
+  --acc:#4A8EFF;
+  --acc2:#6EA8FF;
+
+  --gold:#C9962A;
+
+  --text:#D8E4F0;
+  --muted:#5A6A80;
+  --muted2:#8A9AB0;
+
+  --green:#3A9C6E;
+  --red:#C45050;
+
+  --brd:rgba(255,255,255,.06);
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sb{
+  width:220px;
+  background:var(--s1);
+  border-right:1px solid var(--brd);
+  display:flex;
+  flex-direction:column;
+  position:fixed;
+  top:0;
+  left:0;
+  height:100vh;
+}
+
+.sb-logo{
+  padding:1.3rem 1.2rem;
+  border-bottom:1px solid var(--brd);
+}
+
+.brand{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.5rem;
+  color:var(--gold);
+  font-weight:700;
+}
+
+.sub{
+  font-size:.7rem;
+  color:var(--muted);
+  margin-top:.2rem;
+  letter-spacing:.1em;
+}
+
+.ns{
+  padding:1rem .9rem .3rem;
+  color:var(--muted);
+  font-size:.7rem;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+
+.ni{
+  display:flex;
+  align-items:center;
+  gap:.7rem;
+  margin:.1rem .5rem;
+  padding:.7rem .9rem;
+  border-radius:10px;
+  cursor:pointer;
+  transition:.2s;
+  color:var(--muted2);
+}
+
+.ni:hover{
+  background:var(--s3);
+  color:white;
+}
+
+.ni.on{
+  background:rgba(74,142,255,.15);
+  color:var(--acc);
+  border:1px solid rgba(74,142,255,.2);
+}
+
+/* MAIN */
+
+.main{
+  margin-left:220px;
+  flex:1;
+  padding:2rem;
+}
+
+.top{
+  margin-bottom:2rem;
+}
+
+.title{
+  font-size:2rem;
+  font-family:'Cormorant Garamond',serif;
+}
+
+/* CARDS */
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1rem;
+  margin-bottom:2rem;
+}
+
+.card{
+  background:var(--s2);
+  border:1px solid var(--brd);
+  border-radius:14px;
+  padding:1.3rem;
+}
+
+.card h2{
+  font-size:2rem;
+  margin-bottom:.3rem;
+}
+
+.card p{
+  color:var(--muted);
+  font-size:.8rem;
+}
+
+/* BOX */
+
+.box{
+  background:var(--s2);
+  border:1px solid var(--brd);
+  border-radius:14px;
+  padding:1.5rem;
+  margin-bottom:1.5rem;
+}
+
+.box-title{
+  font-size:1.2rem;
+  margin-bottom:1rem;
+}
+
+/* FORM */
+
+input,
+select{
+  width:100%;
+  padding:.8rem;
+  background:var(--s3);
+  border:1px solid var(--brd);
+  border-radius:10px;
+  color:white;
+  margin-top:.4rem;
+  margin-bottom:1rem;
+}
+
+button{
+  padding:.7rem 1.3rem;
+  border:none;
+  border-radius:10px;
+  background:var(--acc);
+  color:white;
+  cursor:pointer;
+  font-weight:600;
+}
+
+button:hover{
+  background:var(--acc2);
+}
+
+/* TABLE */
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th{
+  text-align:left;
+  color:var(--muted);
+  font-size:.75rem;
+  padding:.8rem;
+  border-bottom:1px solid var(--brd);
+}
+
+td{
+  padding:.9rem .8rem;
+  border-bottom:1px solid var(--brd);
+}
+
+a{
+  color:var(--acc);
+}
+
+/* PANELS */
+
+.panel{
+  display:none;
+}
+
+.panel.on{
+  display:block;
+}
+
+/* UPLOAD */
+
+.upload-zone{
+  border:2px dashed rgba(74,142,255,.3);
+  padding:2rem;
+  border-radius:14px;
+  text-align:center;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.upload-zone:hover{
+  border-color:var(--acc);
+  background:rgba(74,142,255,.08);
+}
+
+.loading{
+  text-align:center;
+  padding:2rem;
+  color:var(--muted);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sb">
+
+  <div class="sb-logo">
+    <div class="brand">ExamTantra</div>
+    <div class="sub">ADMIN PANEL</div>
+  </div>
+
+  <div class="ns">Overview</div>
+
+  <div class="ni on" id="ni-dash" onclick="showPanel('dash')">
+    📊 Dashboard
+  </div>
+
+  <div class="ns">Content</div>
+
+  <div class="ni" id="ni-upload" onclick="showPanel('upload')">
+    📤 Upload Files
+  </div>
+
+  <div class="ni" id="ni-materials" onclick="showPanel('materials')">
+    📚 Materials
+  </div>
+
+  <div class="ni" id="ni-requests" onclick="showPanel('requests')">
+    📬 File Requests
+  </div>
+
+  <div class="ns">Management</div>
+
+  <div class="ni" id="ni-schools" onclick="showPanel('schools')">
+    🏫 Schools
+  </div>
+
+  <div class="ni" id="ni-users" onclick="showPanel('users')">
+    👥 Users
+  </div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+  <div class="top">
+    <div class="title" id="pageTitle">
+      Dashboard
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+
+  <div class="panel on" id="pn-dash">
+
+    <div class="cards">
+
+      <div class="card">
+        <h2 id="stS">0</h2>
+        <p>Schools</p>
+      </div>
+
+      <div class="card">
+        <h2 id="stU">0</h2>
+        <p>Students</p>
+      </div>
+
+      <div class="card">
+        <h2 id="stM">0</h2>
+        <p>Materials</p>
+      </div>
+
+      <div class="card">
+        <h2 id="stR">0</h2>
+        <p>Requests</p>
+      </div>
+
+    </div>
+
+    <div class="box">
+
+      <div class="box-title">
+        Recent Uploads
+      </div>
+
+      <div id="feed">
+        <div class="loading">Loading...</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- UPLOAD -->
+
+  <div class="panel" id="pn-upload">
+
+    <div class="box">
+
+      <div class="box-title">
+        Upload Material
+      </div>
+
+      <label>Type</label>
+
+      <select id="adMt">
+        <option>Study Material</option>
+        <option>Worksheet</option>
+      </select>
+
+      <label>Subject</label>
+
+      <select id="adSubj">
+        <option>Mathematics</option>
+        <option>Physics</option>
+        <option>Chemistry</option>
+        <option>Biology</option>
+        <option>English</option>
+        <option>Computer Science</option>
+      </select>
+
+      <label>Grade</label>
+
+      <select id="adGrade">
+        <option>9</option>
+        <option>10</option>
+        <option>11</option>
+        <option>12</option>
+      </select>
+
+      <label>Material Name</label>
+
+      <input type="text" id="adName">
+
+      <div class="upload-zone"
+      onclick="document.getElementById('adFile').click()">
+
+        Click to choose file
+
+      </div>
+
+      <input
+      type="file"
+      id="adFile"
+      style="display:none"
+      onchange="adminFileSel(this)">
+
+      <br>
+
+      <button onclick="adminUpload()">
+        Upload File
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- MATERIALS -->
+
+  <div class="panel" id="pn-materials">
+
+    <div class="box">
+
+      <div class="box-title">
+        Materials Library
+      </div>
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Subject</th>
+            <th>Grade</th>
+            <th>Type</th>
+            <th>File</th>
+          </tr>
+        </thead>
+
+        <tbody id="matTb">
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  <!-- REQUESTS -->
+
+  <div class="panel" id="pn-requests">
+
+    <div class="box">
+
+      <div class="box-title">
+        File Requests
+      </div>
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>User</th>
+            <th>Subject</th>
+          </tr>
+        </thead>
+
+        <tbody id="reqTb">
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  <!-- SCHOOLS -->
+
+  <div class="panel" id="pn-schools">
+
+    <div class="box">
+
+      <div class="box-title">
+        Add School
+      </div>
+
+      <label>School Name</label>
+
+      <input type="text" id="sName">
+
+      <label>City</label>
+
+      <input type="text" id="sCity">
+
+      <button onclick="addSchool()">
+        Add School
+      </button>
+
+    </div>
+
+    <div class="box">
+
+      <div class="box-title">
+        Registered Schools
+      </div>
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>City</th>
+          </tr>
+        </thead>
+
+        <tbody id="schTb">
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  <!-- USERS -->
+
+  <div class="panel" id="pn-users">
+
+    <div class="box">
+
+      <div class="box-title">
+        Students
+      </div>
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Grade</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+
+        <tbody id="userTb">
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- FIREBASE -->
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+  getCountFromServer
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* FIREBASE CONFIG */
+
+const cfg = {
+
+  apiKey:"YOUR_API_KEY",
+
+  authDomain:"examtantra-99d70.firebaseapp.com",
+
+  projectId:"examtantra-99d70",
+
+  storageBucket:"examtantra-99d70.firebasestorage.app",
+
+  messagingSenderId:"651555565580",
+
+  appId:"1:651555565580:web:500a7fa6af3c8fcaf87e29"
+};
+
+/* INIT */
+
+const app = initializeApp(cfg);
+
+const db = getFirestore(app);
+
+/* CLOUDINARY */
+
+const CLOUD_NAME = "ds3bcxa2p";
+
+const CLOUD_PRESET = "ExamTantra";
+
+/* PANEL SWITCH */
+
+window.showPanel = function(name){
+
+  document
+  .querySelectorAll('.panel')
+  .forEach(p=>p.classList.remove('on'));
+
+  document
+  .querySelectorAll('.ni')
+  .forEach(n=>n.classList.remove('on'));
+
+  document
+  .getElementById('pn-'+name)
+  .classList.add('on');
+
+  document
+  .getElementById('ni-'+name)
+  .classList.add('on');
+
+  document.getElementById('pageTitle')
+  .innerText = name;
+
+  if(name==='materials'){
+    loadMaterials();
+  }
+
+  if(name==='schools'){
+    loadSchools();
+  }
+
+  if(name==='users'){
+    loadUsers();
+  }
+};
+
+/* DASHBOARD */
+
+async function loadDash(){
+
+  try{
+
+    const schools =
+    await getCountFromServer(
+      collection(db,'schools')
+    );
+
+    const materials =
+    await getCountFromServer(
+      collection(db,'materials')
+    );
+
+    document.getElementById('stS')
+    .innerText = schools.data().count;
+
+    document.getElementById('stM')
+    .innerText = materials.data().count;
+
+  }catch(e){
+
+    console.error(e);
+  }
+}
+
+/* ADD SCHOOL */
+
+window.addSchool = async function(){
+
+  const name =
+  document.getElementById('sName').value;
+
+  const city =
+  document.getElementById('sCity').value;
+
+  if(!name){
+    alert("Enter school name");
+    return;
+  }
+
+  await addDoc(
+    collection(db,'schools'),
+    {
+      name,
+      city,
+      createdAt:new Date()
+    }
+  );
+
+  document.getElementById('sName').value='';
+  document.getElementById('sCity').value='';
+
+  loadSchools();
+  loadDash();
+
+  alert("School added");
+};
+
+/* LOAD SCHOOLS */
+
+async function loadSchools(){
+
+  const tb =
+  document.getElementById('schTb');
+
+  tb.innerHTML='';
+
+  const snap =
+  await getDocs(
+    query(
+      collection(db,'schools'),
+      orderBy('createdAt','desc')
+    )
+  );
+
+  snap.forEach(doc=>{
+
+    const s = doc.data();
+
+    tb.innerHTML += `
+      <tr>
+        <td>${s.name}</td>
+        <td>${s.city || '-'}</td>
+      </tr>
+    `;
+  });
+}
+
+/* FILE */
+
+let adminFile = null;
+
+window.adminFileSel = function(inp){
+
+  adminFile = inp.files[0];
+};
+
+/* CLOUDINARY UPLOAD */
+
+async function uploadToCloudinary(file){
+
+  const fd = new FormData();
+
+  fd.append("file",file);
+
+  fd.append(
+    "upload_preset",
+    CLOUD_PRESET
+  );
+
+  const response = await fetch(
+
+    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`,
+
+    {
+      method:"POST",
+      body:fd
+    }
+  );
+
+  const data = await response.json();
+
+  return data.secure_url;
+}
+
+/* UPLOAD */
+
+window.adminUpload = async function(){
+
+  const type =
+  document.getElementById('adMt').value;
+
+  const subject =
+  document.getElementById('adSubj').value;
+
+  const grade =
+  document.getElementById('adGrade').value;
+
+  const name =
+  document.getElementById('adName').value;
+
+  if(!name || !adminFile){
+
+    alert("Fill all fields");
+    return;
+  }
+
+  try{
+
+    const url =
+    await uploadToCloudinary(adminFile);
+
+    await addDoc(
+      collection(db,'materials'),
+      {
+        type,
+        subject,
+        grade,
+        name,
+        url,
+        createdAt:new Date()
+      }
+    );
+
+    alert("Upload successful");
+
+    loadDash();
+
+  }catch(e){
+
+    console.error(e);
+
+    alert("Upload failed");
+  }
+};
+
+/* LOAD MATERIALS */
+
+async function loadMaterials(){
+
+  const tb =
+  document.getElementById('matTb');
+
+  tb.innerHTML='';
+
+  const snap =
+  await getDocs(
+    query(
+      collection(db,'materials'),
+      orderBy('createdAt','desc')
+    )
+  );
+
+  snap.forEach(doc=>{
+
+    const m = doc.data();
+
+    tb.innerHTML += `
+      <tr>
+        <td>${m.name}</td>
+        <td>${m.subject}</td>
+        <td>${m.grade}</td>
+        <td>${m.type}</td>
+        <td>
+          <a href="${m.url}" target="_blank">
+            View
+          </a>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+/* USERS */
+
+async function loadUsers(){
+
+  const tb =
+  document.getElementById('userTb');
+
+  tb.innerHTML='';
+
+  const snap =
+  await getDocs(
+    query(
+      collection(db,'users'),
+      orderBy('points','desc')
+    )
+  );
+
+  snap.forEach(doc=>{
+
+    const u = doc.data();
+
+    tb.innerHTML += `
+      <tr>
+        <td>${u.name}</td>
+        <td>${u.grade}</td>
+        <td>${u.points || 0}</td>
+      </tr>
+    `;
+  });
+}
+
+/* START */
+
+loadDash();
+
+</script>
+
+</body>
+</html>
